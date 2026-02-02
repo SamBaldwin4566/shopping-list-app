@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import NavBar from './components/NavBar';
 
+
 function App() {
   // Load user from sessionStorage
   const [user, setUser] = useState(() => {
@@ -15,6 +16,12 @@ function App() {
   const [username, setUsername] = useState('');
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
+  const [newName, setNewName] = useState('');
+  const [newPin, setNewPin] = useState('');
+  const [createError, setCreateError] = useState('');
+  const [createSuccess, setCreateSuccess] = useState(false);
 
   // Login function
   const handleLogin = async () => {
@@ -52,9 +59,45 @@ function App() {
     sessionStorage.removeItem('user');
   };
 
+  const handleCreateUser = async () => {
+    setCreateError('');
+    setCreateSuccess(false);
+
+    if (!newUsername || !newName || !newPin) {
+      setCreateError('All fields are required');
+      return;
+    }
+
+    try {
+      const res = await fetch('http://localhost:3001/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: newUsername,
+          name: newName,
+          pin: newPin
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setCreateError(data.error || 'Failed to create user');
+        return;
+      }
+
+      setCreateSuccess(true);
+      setNewUsername('');
+      setNewName('');
+      setNewPin('');
+    } catch {
+      setCreateError('Network error');
+    }
+  };  
+
   // Render different views using if…else
+// If the user is logged in
   if (user) {
-    // Logged in view
     return (
       <div>
         <NavBar onLogout={handleLogout} />
@@ -65,37 +108,104 @@ function App() {
         </div>
       </div>
     );
-  } else {
-    // Login form view
-    return (
-      <div className="container">
-        <h1>Shopping List App</h1>
-        <div className="login-container">
-          <p>Log in</p>
+  } 
 
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
-            className="login-input"
-          />
+  // If the user is not logged in
+  else {
+    // Decide which form to show
+    if (showCreateForm) {
+      // --- CREATE USER FORM ---
+      return (
+        <div className="container">
+          <h1>Shopping List App</h1>
+          <div className="login-container">
+            <h3>Create New User</h3>
 
-          <input
-            type="password"
-            value={pin}
-            onChange={(e) => setPin(e.target.value)}
-            placeholder="PIN"
-            maxLength={4}
-            className="login-input"
-          />
+            {/* Username input */}
+            <input
+              type="text"
+              placeholder="Username"
+              value={newUsername}
+              onChange={(e) => setNewUsername(e.target.value)}
+              className="login-input"
+            />
 
-          <button onClick={handleLogin}>Log In</button>
+            {/* Display name input */}
+            <input
+              type="text"
+              placeholder="Name"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              className="login-input"
+            />
 
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+            {/* PIN input */}
+            <input
+              type="password"
+              placeholder="PIN"
+              value={newPin}
+              maxLength={4}
+              onChange={(e) => setNewPin(e.target.value)}
+              className="login-input"
+            />
+
+            {/* Submit button */}
+            <button onClick={handleCreateUser}>Create User</button>
+
+            {/* Error and success messages */}
+            {createError && <p style={{ color: 'red' }}>{createError}</p>}
+            {createSuccess && <p style={{ color: 'green' }}>User created!</p>}
+
+            {/* Toggle back to login */}
+            <p>
+              <button onClick={() => setShowCreateForm(false)}>Back</button>
+            </p>
+          </div>
         </div>
-      </div>
-    );
+      );
+    } 
+
+    // --- LOGIN FORM ---
+    else {
+      return (
+        <div className="container">
+          <h1>Shopping List App</h1>
+          <div className="login-container">
+
+            {/* Username input */}
+            <p>Enter your username and PIN to log in:</p>
+            <input
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="login-input"
+            />
+
+            {/* PIN input */}
+            <input
+              type="password"
+              placeholder="PIN"
+              value={pin}
+              maxLength={4}
+              onChange={(e) => setPin(e.target.value)}
+              className="login-input"
+            />
+
+            {/* Login button */}
+            <button onClick={handleLogin}>Log In</button>
+
+            {/* Error message */}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+
+            {/* Toggle to create new user */}
+            <p>
+              <button onClick={() => setShowCreateForm(true)}>Create Account</button>
+            </p>
+          </div>
+        </div>
+      );
+    }
   }
 }
 

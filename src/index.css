@@ -72,7 +72,7 @@ button {
   padding: 0.5rem 1rem;
   font-size: 1rem;
   cursor: pointer;
-  width: 100px;
+  /* width: 100px; */
   margin: auto;
   border-radius: 4px;
 }
@@ -96,7 +96,6 @@ button:hover {
 
   padding: 0 1.5rem;
   background-color: #918c8c;
-  border-bottom: 2px solid red;
 
   box-sizing: border-box;
   z-index: 1000;
