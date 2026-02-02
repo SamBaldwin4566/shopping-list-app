@@ -1,0 +1,122 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242323;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- Base layout ---------- */
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* ---------- Containers ---------- */
+
+.container {
+  background-color: rgb(2, 2, 2);
+  color: white;
+  padding: 2rem;
+  max-width: 90%;
+  width: fit-content;
+  box-sizing: border-box;
+  text-align: center;
+  border-radius: 8px;
+  margin: 150px auto 0; /* space for fixed navbar */
+}
+
+/* ---------- Login ---------- */
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+  margin: 2rem auto;
+  gap: 1rem;
+}
+
+.login-input {
+  width: 150px;
+  text-align: center;
+  padding: 8px;
+  margin: auto;
+  background-color: rgb(180, 153, 4);
+  font-size: 20px;
+  border: none;
+  border-radius: 4px;
+}
+
+.pin-input::placeholder {
+  color: #090808;
+}
+
+/* ---------- Typography ---------- */
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+/* ---------- Buttons ---------- */
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 100px;
+  margin: auto;
+  border-radius: 4px;
+}
+
+button:hover {
+  border: rgb(180, 153, 4) 2px solid;
+}
+
+/* ---------- Navbar ---------- */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 0 1.5rem;
+  background-color: #918c8c;
+  border-bottom: 2px solid red;
+
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.navbar-left,
+.navbar-right {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.navbar button {
+  padding: 0.5rem 1rem;
+  background: none;
+  color: white;
+  border: 1px solid #555;
+  cursor: pointer;
+  height: 45px;
+}
+
+.navbar button:hover {
+  background-color: #444;
+}
