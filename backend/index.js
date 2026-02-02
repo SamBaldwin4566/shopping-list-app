@@ -1,42 +1,52 @@
 const express = require('express');
 const cors = require('cors');
-const db = require('./db/database');
+const users = require('./db/models/users');
+const meals = require('./db/models/meals');
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
-// --- Routes ---
-
-// Debug route: get all users
+// Users
 app.get('/api/users', (req, res) => {
-  const users = db.prepare('SELECT id, name FROM users').all();
-  res.json(users);
+  res.json(users.getAllUsers());
 });
 
-// Login with PIN
 app.post('/api/login', (req, res) => {
   const { username, pin } = req.body;
+  const user = users.getUserByUsernameAndPin(username, pin);
+
+  if (!user) return res.status(401).json({ error: 'Invalid username or PIN' });
+  res.json(user);
+});
+
+// Meals
+app.get('/api/meals/:userId', (req, res) => {
+  const { userId } = req.params;
+  res.json(meals.getMealsByUserId(userId));
+});
+
+app.post('/api/meals', (req, res) => {
+  const { name, ingredients, protein, userId } = req.body;
+  meals.createMeal(name, ingredients, protein, userId);
+  res.json({ success: true });
+});
+
+// Create a new user
+app.post('/api/users', (req, res) => {
+  const { username, name, pin } = req.body;
+
+  if (!username || !name || !pin) {
+    return res.status(400).json({ error: 'Please provide username, name, and PIN' });
+  }
 
   try {
-    const user = db
-      .prepare(
-        'SELECT id, name FROM users WHERE username = ? AND pin = ?'
-      )
-      .get(username, pin);
-
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid username or PIN' });
-    }
-
-    res.json(user);
+    const user = users.createUser(username, name, pin);
+    res.json({ success: true, userId: user.lastInsertRowid });
   } catch (err) {
-    res.status(500).json({ error: 'Database error' });
+    // e.g., duplicate username
+    res.status(500).json({ error: err.message });
   }
 });
 
-// --- Start server ---
-app.listen(3001, () => {
-  console.log('Server running on http://localhost:3001');
-});
+app.listen(3001, () => console.log('Server running on port 3001'));
