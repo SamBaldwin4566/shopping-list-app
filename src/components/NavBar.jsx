@@ -1,10 +1,14 @@
-function NavBar() {
+import { Link } from 'react-router-dom';
+
+function NavBar({ onLogout }) {
   return (
     <nav className="navbar">
-        <button>Weekly Planner</button>
-        <button>Meals</button>
-        <button>Shopping List</button>
-        <button>Settings</button>
+      <Link to="/planner">Weekly Planner</Link>
+      <Link to="/meals">Meals</Link>
+      <Link to="/shopping">Shopping List</Link>
+      <Link to="/settings">Settings</Link>
+
+      <button className="logout-btn" onClick={onLogout}>Log Out</button>
     </nav>
   );
 }

@@ -14,28 +14,33 @@
 }
 
 /* ---------- Base layout ---------- */
-
 body {
   margin: 0;
   min-height: 100vh;
 }
 
 /* ---------- Containers ---------- */
-
 .container {
+  position: relative;
   background-color: rgb(2, 2, 2);
   color: white;
   padding: 2rem;
   max-width: 90%;
+  min-width: 50%;
   width: fit-content;
   box-sizing: border-box;
   text-align: center;
   border-radius: 8px;
-  margin: 150px auto 0; /* space for fixed navbar */
+  margin: 30px auto; /* space for fixed navbar */
+}
+
+/* ---------- Typography ---------- */
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
 }
 
 /* ---------- Login ---------- */
-
 .login-container {
   display: flex;
   flex-direction: column;
@@ -59,63 +64,238 @@ body {
   color: #090808;
 }
 
-/* ---------- Typography ---------- */
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-/* ---------- Buttons ---------- */
-
+/* ---------- Buttons (Global) ---------- */
 button {
   padding: 0.5rem 1rem;
   font-size: 1rem;
   cursor: pointer;
-  /* width: 100px; */
   margin: auto;
   border-radius: 4px;
+  border: 2px solid transparent; /* reserve space for hover border */
+  transition: border-color 0.2s, background-color 0.2s;
 }
 
 button:hover {
-  border: rgb(180, 153, 4) 2px solid;
+  border-color: rgb(180, 153, 4);
+}
+
+/* ---------- Logout Button ---------- */
+.logout-btn {
+  background-color: #444;
+  color: white;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  border-color: rgb(180, 153, 4);
+  background-color: #666;
 }
 
 /* ---------- Navbar ---------- */
-
 .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 80px;
-
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  padding: 0 1.5rem;
-  background-color: #918c8c;
-
-  box-sizing: border-box;
-  z-index: 1000;
+  gap: 20px;
+  padding: 15px;
+  background-color: #222;
 }
 
-.navbar-left,
-.navbar-right {
-  display: flex;
-  gap: 0.5rem;
+.navbar a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.navbar a:hover {
+  color: grey;
 }
 
 .navbar button {
-  padding: 0.5rem 1rem;
-  background: none;
-  color: white;
-  border: 1px solid #555;
-  cursor: pointer;
-  height: 45px;
+  margin-left: auto;
 }
 
-.navbar button:hover {
+/* ---------- Meals Page ---------- */
+.meals-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Add Meal button */
+.add-meal-btn {
+  display: block;
+  margin: -65px auto;
+  margin-bottom: 40px;
+  background-color: rgb(180, 153, 4);
+  color: #090808;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.add-meal-btn:hover {
+  border-color: #fff;
+  background-color: #b59e03;
+}
+
+/* Popup form */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #222;
+  padding: 2rem;
+  border: 2px solid #555;
+  border-radius: 8px;
+  z-index: 1000;
+  min-width: 300px;
+}
+
+/* Overlay behind popup */
+.popup::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  z-index: -1;
+}
+
+/* Form inputs inside popup */
+.popup input {
+  display: block;
+  width: 90%;
+  margin: 0.5rem auto;
+  padding: 8px;
+  border-radius: 4px;
+  border: none;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Popup buttons */
+.popup button {
+  margin: 0.5rem 5px 0.5rem 0;
+}
+
+/* Meal categories (checkboxes) */
+.meal-categories {
+  display: flex;
+  justify-content: space-around;
+  margin: 1rem 0;
+}
+
+.meal-categories label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.popup input[type="checkbox"] {
+  width: auto;
+  height: auto;
+}
+
+/* ---------- Ingredients List (Single input + chips) ---------- */
+.ingredient-input-wrapper {
+  margin: 1rem 0;
+}
+
+.ingredient-list {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.ingredient-chip {
+  display: inline-block;
+  background-color: rgb(180, 153, 4);
+  color: #090808;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  margin: 0 0.3rem 0.3rem 0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.ingredient-chip:hover {
+  background-color: #b59e03;
+}
+
+.add-ingredient {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.add-ingredient input {
+  flex: 1;
+  padding: 0.4rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #222;
+  color: white;
+}
+
+.add-ingredient button {
+  padding: 0.4rem 0.8rem;
+  background-color: rgb(180, 153, 4);
+  border: 2px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.add-ingredient button:hover {
+  border-color: #fff;
+  background-color: #b59e03;
+}
+
+.meals-list-container {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+.meal-category-tabs {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.meal-category-tabs button {
+  width:120px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  border: 2px solid transparent;
   background-color: #444;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.meal-category-tabs button.active {
+  background-color: rgb(180, 153, 4);
+  color: #090808;
+}
+
+.meals-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.meals-list li {
+  padding: 0.5rem;
+  margin-bottom: 0.3rem;
+  background-color: #333;
+  border-radius: 6px;
 }

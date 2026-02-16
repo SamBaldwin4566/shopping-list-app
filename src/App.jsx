@@ -1,5 +1,10 @@
 import { useState } from 'react';
 import NavBar from './components/NavBar';
+import { Routes, Route, useNavigate } from 'react-router-dom';
+import WeeklyPlanner from './pages/WeeklyPlanner';
+import Meals from './pages/Meals';
+import ShoppingList from './pages/ShoppingList';
+import Settings from './pages/Settings';
 
 
 function App() {
@@ -22,6 +27,8 @@ function App() {
   const [newPin, setNewPin] = useState('');
   const [createError, setCreateError] = useState('');
   const [createSuccess, setCreateSuccess] = useState(false);
+
+  const navigate = useNavigate();
 
   // Login function
   const handleLogin = async () => {
@@ -57,6 +64,8 @@ function App() {
     setPin('');
     setError('');
     sessionStorage.removeItem('user');
+      // Send the app back to "/"
+    navigate('/');
   };
 
   const handleCreateUser = async () => {
@@ -97,18 +106,27 @@ function App() {
 
   // Render different views using if…else
 // If the user is logged in
-  if (user) {
-    return (
-      <div>
-        <NavBar onLogout={handleLogout} />
-        <div className="container">
-          <h1>Shopping List App</h1>
-          <h2>Welcome, {user.name}!</h2>
-          <button onClick={handleLogout}>Log Out</button>
-        </div>
+if (user) {
+  return (
+    <>
+      <NavBar onLogout={handleLogout} />
+
+      <div className="container">
+        <Routes>
+          <Route path="/" element={
+            <div className="container">
+              <h1>Shopping List App</h1>
+              <h2>Welcome, {user.name}!</h2>
+            </div>} />
+          <Route path="/planner" element={<WeeklyPlanner />} />
+          <Route path="/meals" element={<Meals user={user} />} />
+          <Route path="/shopping" element={<ShoppingList />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
       </div>
-    );
-  } 
+    </>
+  );
+}
 
   // If the user is not logged in
   else {

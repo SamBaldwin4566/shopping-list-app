@@ -7,35 +7,33 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Users
+/* =========================
+   USERS ROUTES
+========================= */
+
+// Get all users
 app.get('/api/users', (req, res) => {
   res.json(users.getAllUsers());
 });
 
+// Login user
 app.post('/api/login', (req, res) => {
   const { username, pin } = req.body;
+
   const user = users.getUserByUsernameAndPin(username, pin);
 
-  if (!user) return res.status(401).json({ error: 'Invalid username or PIN' });
+  if (!user) {
+    return res.status(401).json({ error: 'Invalid username or PIN' });
+  }
+
   res.json(user);
-});
-
-// Meals
-app.get('/api/meals/:userId', (req, res) => {
-  const { userId } = req.params;
-  res.json(meals.getMealsByUserId(userId));
-});
-
-app.post('/api/meals', (req, res) => {
-  const { name, ingredients, protein, userId } = req.body;
-  meals.createMeal(name, ingredients, protein, userId);
-  res.json({ success: true });
 });
 
 // Create a new user
 app.post('/api/users', (req, res) => {
   const { username, name, pin } = req.body;
 
+  // Basic validation
   if (!username || !name || !pin) {
     return res.status(400).json({ error: 'Please provide username, name, and PIN' });
   }
@@ -44,9 +42,63 @@ app.post('/api/users', (req, res) => {
     const user = users.createUser(username, name, pin);
     res.json({ success: true, userId: user.lastInsertRowid });
   } catch (err) {
-    // e.g., duplicate username
+    // Handles duplicate username, etc.
     res.status(500).json({ error: err.message });
   }
 });
 
-app.listen(3001, () => console.log('Server running on port 3001'));
+
+/* =========================
+   MEALS ROUTES
+========================= */
+
+// Get all meals for a specific user
+app.get('/api/meals/:userId', (req, res) => {
+  const { userId } = req.params;
+
+  res.json(meals.getMealsByUserId(userId));
+});
+
+// Create a new meal
+app.post('/api/meals', (req, res) => {
+  const {
+    name,
+    ingredients,
+    protein,
+    userId,
+    breakfast,
+    lunch,
+    dinner
+  } = req.body;
+
+  // Basic validation
+  if (!name || !userId) {
+    return res.status(400).json({ error: 'Meal name and userId are required' });
+  }
+
+  try {
+    meals.createMeal(
+      name,
+      ingredients,
+      protein,
+      userId,
+      breakfast ? 1 : 0,  // Convert true/false to 1/0
+      lunch ? 1 : 0,
+      dinner ? 1 : 0
+    );
+
+    res.json({ success: true });
+
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+/* =========================
+   START SERVER
+========================= */
+
+app.listen(3001, () => {
+  console.log('Server running on port 3001');
+});

@@ -1,3 +1,5 @@
+//command to open db: sqlite3 db/database.sqlite
+
 const path = require('path');
 const Database = require('better-sqlite3');
 
