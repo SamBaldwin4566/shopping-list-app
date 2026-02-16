@@ -1,20 +1,38 @@
 const db = require('../database');
 
-// Get all meals
+// =========================
+// GET ALL MEALS
+// =========================
 function getAllMeals() {
   return db.prepare('SELECT * FROM meals').all();
 }
 
-// Get meals for a specific user
+// =========================
+// GET MEALS FOR A USER
+// =========================
 function getMealsByUserId(userId) {
-  return db.prepare('SELECT * FROM meals WHERE userId = ?').all(userId);
+  return db
+    .prepare('SELECT * FROM meals WHERE userId = ? ORDER BY createdAt DESC')
+    .all(userId);
 }
 
-// Add a new meal
+// =========================
+// GET SINGLE MEAL BY ID
+// =========================
+function getMealById(id) {
+  return db
+    .prepare('SELECT * FROM meals WHERE id = ?')
+    .get(id);
+}
+
+// =========================
+// CREATE MEAL
+// =========================
 function createMeal(
   name,
   ingredients,
   protein,
+  calories,
   userId,
   breakfast,
   lunch,
@@ -22,10 +40,69 @@ function createMeal(
 ) {
   return db.prepare(
     `INSERT INTO meals 
-     (name, ingredients, protein, userId, breakfast, lunch, dinner)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`
-  ).run(name, ingredients, protein, userId, breakfast, lunch, dinner);
+     (name, ingredients, protein, calories, userId, breakfast, lunch, dinner)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+  ).run(
+    name,
+    ingredients,
+    protein,
+    calories,
+    userId,
+    breakfast,
+    lunch,
+    dinner
+  );
 }
 
+// =========================
+// UPDATE MEAL
+// =========================
+function updateMeal(
+  id,
+  name,
+  ingredients,
+  protein,
+  calories,
+  breakfast,
+  lunch,
+  dinner
+) {
+  return db.prepare(
+    `UPDATE meals
+     SET name = ?, 
+         ingredients = ?, 
+         protein = ?, 
+         calories = ?, 
+         breakfast = ?, 
+         lunch = ?, 
+         dinner = ?
+     WHERE id = ?`
+  ).run(
+    name,
+    ingredients,
+    protein,
+    calories,
+    breakfast,
+    lunch,
+    dinner,
+    id
+  );
+}
 
-module.exports = { getAllMeals, getMealsByUserId, createMeal };
+// =========================
+// DELETE MEAL
+// =========================
+function deleteMeal(id) {
+  return db
+    .prepare('DELETE FROM meals WHERE id = ?')
+    .run(id);
+}
+
+module.exports = {
+  getAllMeals,
+  getMealsByUserId,
+  getMealById,
+  createMeal,
+  updateMeal,
+  deleteMeal
+};

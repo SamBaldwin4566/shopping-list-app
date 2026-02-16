@@ -42,7 +42,6 @@ app.post('/api/users', (req, res) => {
     const user = users.createUser(username, name, pin);
     res.json({ success: true, userId: user.lastInsertRowid });
   } catch (err) {
-    // Handles duplicate username, etc.
     res.status(500).json({ error: err.message });
   }
 });
@@ -65,6 +64,7 @@ app.post('/api/meals', (req, res) => {
     name,
     ingredients,
     protein,
+    calories,
     userId,
     breakfast,
     lunch,
@@ -80,15 +80,50 @@ app.post('/api/meals', (req, res) => {
     meals.createMeal(
       name,
       ingredients,
-      protein,
+      Number(protein) || 0,
+      Number(calories) || 0,
       userId,
-      breakfast ? 1 : 0,  // Convert true/false to 1/0
+      breakfast ? 1 : 0,
       lunch ? 1 : 0,
       dinner ? 1 : 0
     );
 
     res.json({ success: true });
 
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Delete a meal
+app.delete('/api/meals/:id', (req, res) => {
+  const { id } = req.params;
+
+  try {
+    meals.deleteMeal(id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update a meal
+app.put('/api/meals/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, ingredients, protein, calories, breakfast, lunch, dinner } = req.body;
+
+  try {
+    meals.updateMeal(
+      id,
+      name,
+      ingredients,
+      Number(protein) || 0,
+      Number(calories) || 0,
+      breakfast ? 1 : 0,
+      lunch ? 1 : 0,
+      dinner ? 1 : 0
+    );
+    res.json({ success: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

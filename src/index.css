@@ -299,3 +299,54 @@ button:hover {
   background-color: #333;
   border-radius: 6px;
 }
+
+/* ---------- Meals Grid & Cards ---------- */
+.meals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.meal-card {
+  background-color: #333;
+  color: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.meal-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
+}
+
+.meal-card h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+}
+
+.meal-tags {
+  margin-top: 8px;
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  margin-right: 4px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.tag.breakfast { background-color: #f39c12; color: #090808; }
+.tag.lunch { background-color: #27ae60; color: white; }
+.tag.dinner { background-color: #2980b9; color: white; }
+
+.card-buttons {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
