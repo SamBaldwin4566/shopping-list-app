@@ -3,6 +3,8 @@ import MealsList from "../components/MealsList";
 
 function Meals({ user }) {
   const [showForm, setShowForm] = useState(false);
+
+  // Form fields
   const [mealName, setMealName] = useState('');
   const [ingredientInput, setIngredientInput] = useState('');
   const [ingredients, setIngredients] = useState([]);
@@ -12,10 +14,16 @@ function Meals({ user }) {
   const [lunch, setLunch] = useState(false);
   const [dinner, setDinner] = useState(false);
 
+  // Editing + refresh
+  const [editingMeal, setEditingMeal] = useState(null);
   const [refreshMeals, setRefreshMeals] = useState(false);
 
-  // Error message state
+  // Errors
   const [errorMessage, setErrorMessage] = useState('');
+
+  /* =========================
+     INGREDIENT HANDLING
+  ========================= */
 
   const addIngredient = () => {
     const trimmed = ingredientInput.trim();
@@ -26,15 +34,68 @@ function Meals({ user }) {
   };
 
   const removeIngredient = (index) => {
-    const newIngredients = [...ingredients];
-    newIngredients.splice(index, 1);
-    setIngredients(newIngredients);
+    const updated = [...ingredients];
+    updated.splice(index, 1);
+    setIngredients(updated);
   };
+
+  /* =========================
+     EDIT HANDLER
+  ========================= */
+
+  const handleEditMeal = (meal) => {
+    setEditingMeal(meal);
+    setShowForm(true);
+
+    setMealName(meal.name);
+    setIngredients(meal.ingredients);
+    setProtein(meal.protein.toString());
+    setCalories(meal.calories?.toString() || '');
+    setBreakfast(meal.breakfast === 1);
+    setLunch(meal.lunch === 1);
+    setDinner(meal.dinner === 1);
+  };
+
+  /* =========================
+     DELETE HANDLER
+  ========================= */
+  
+  const handleDeleteMeal = async (mealId) => {
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete this meal?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+    const res = await fetch(
+      `http://localhost:3001/api/meals/${mealId}`,
+      { method: 'DELETE' }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.error || "Failed to delete meal.");
+      return;
+    }
+
+    // Refresh meals list
+    setRefreshMeals(prev => !prev);
+
+    } catch (err) {
+      console.error(err);
+      alert("Network error: failed to delete meal.");
+    }
+  };
+
+
+  /* =========================
+     SUBMIT (CREATE + UPDATE)
+  ========================= */
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Clear previous error
     setErrorMessage('');
 
     // Validation
@@ -51,9 +112,16 @@ function Meals({ user }) {
       return;
     }
 
+    const isEditing = Boolean(editingMeal);
+    const url = isEditing
+      ? `http://localhost:3001/api/meals/${editingMeal.id}`
+      : 'http://localhost:3001/api/meals';
+
+    const method = isEditing ? 'PUT' : 'POST';
+
     try {
-      const res = await fetch('http://localhost:3001/api/meals', {
-        method: 'POST',
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: mealName,
@@ -70,7 +138,7 @@ function Meals({ user }) {
       const data = await res.json();
 
       if (!res.ok) {
-        setErrorMessage(data.error || "Failed to add meal.");
+        setErrorMessage(data.error || "Failed to save meal.");
         return;
       }
 
@@ -83,16 +151,21 @@ function Meals({ user }) {
       setBreakfast(false);
       setLunch(false);
       setDinner(false);
+      setEditingMeal(null);
       setShowForm(false);
 
-      // Trigger auto-refresh
+      // Refresh meals
       setRefreshMeals(prev => !prev);
 
     } catch (err) {
-      setErrorMessage("Network error: failed to add meal.");
       console.error(err);
+      setErrorMessage("Network error: failed to save meal.");
     }
   };
+
+  /* =========================
+     RENDER
+  ========================= */
 
   return (
     <div className="container">
@@ -105,10 +178,8 @@ function Meals({ user }) {
       {showForm && (
         <div className="popup">
           <form onSubmit={handleSubmit}>
-            {/* Display error message */}
             {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
 
-            {/* Meal Name */}
             <input
               type="text"
               placeholder="Meal Name"
@@ -116,7 +187,7 @@ function Meals({ user }) {
               onChange={(e) => setMealName(e.target.value)}
             />
 
-            {/* Ingredient Input */}
+            {/* Ingredients */}
             <div className="ingredient-input-wrapper">
               <div className="ingredient-list">
                 Ingredients:{' '}
@@ -130,6 +201,7 @@ function Meals({ user }) {
                   </span>
                 ))}
               </div>
+
               <div className="add-ingredient">
                 <input
                   type="text"
@@ -141,7 +213,6 @@ function Meals({ user }) {
               </div>
             </div>
 
-            {/* Protein */}
             <input
               type="number"
               placeholder="Protein (g)"
@@ -149,7 +220,6 @@ function Meals({ user }) {
               onChange={(e) => setProtein(e.target.value)}
             />
 
-            {/* Calories */}
             <input
               type="number"
               placeholder="Calories"
@@ -157,7 +227,6 @@ function Meals({ user }) {
               onChange={(e) => setCalories(e.target.value)}
             />
 
-            {/* Meal Categories */}
             <div className="meal-categories">
               <label>
                 <input
@@ -182,14 +251,26 @@ function Meals({ user }) {
               </label>
             </div>
 
-            {/* Buttons */}
-            <button type="submit">Save Meal</button>
-            <button type="button" onClick={() => setShowForm(false)}>Cancel</button>
+            <button type="submit">
+              {editingMeal ? 'Update Meal' : 'Save Meal'}
+            </button>
+
+            <button type="button" onClick={() => {
+              setShowForm(false);
+              setEditingMeal(null);
+            }}>
+              Cancel
+            </button>
           </form>
         </div>
       )}
 
-      <MealsList userId={user.id} refresh={refreshMeals} />
+      <MealsList
+        userId={user.id}
+        refresh={refreshMeals}
+        onEdit={handleEditMeal}
+        onDelete={handleDeleteMeal}
+      />
     </div>
   );
 }

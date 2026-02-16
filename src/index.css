@@ -345,8 +345,43 @@ button:hover {
 .tag.lunch { background-color: #27ae60; color: white; }
 .tag.dinner { background-color: #2980b9; color: white; }
 
+/* ---------- Meal Card / List Buttons ---------- */
 .card-buttons {
-  margin-top: 12px;
+  margin-top: 8px;
   display: flex;
   gap: 8px;
+}
+
+/* Edit Button */
+.card-buttons .edit-btn {
+  background-color: rgb(180, 153, 4);
+  color: #090808;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.card-buttons .edit-btn:hover {
+  background-color: #b59e03;
+  border-color: #fff;
+}
+
+/* Delete Button */
+.card-buttons .delete-btn {
+  background-color: #d9534f; /* nice red */
+  color: white;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 0.4rem 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.card-buttons .delete-btn:hover {
+  background-color: #c9302c;
+  border-color: #fff;
 }

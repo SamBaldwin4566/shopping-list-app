@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-function MealsList({ userId, refresh }) {
+function MealsList({ userId, refresh, onEdit, onDelete }) {
   const [meals, setMeals] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("breakfast");
   const [loading, setLoading] = useState(true);
@@ -71,7 +71,8 @@ function MealsList({ userId, refresh }) {
 
               {/* Placeholder for future buttons */}
               <div className="card-buttons">
-                {/* Edit / Delete will go here later */}
+                <button className="edit-btn" onClick={() => onEdit(meal)}>Edit</button>
+                <button className="delete-btn" onClick={() => onDelete(meal.id)}>Delete</button>
               </div>
             </div>
           ))
