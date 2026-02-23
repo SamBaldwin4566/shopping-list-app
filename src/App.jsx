@@ -118,10 +118,10 @@ if (user) {
               <h1>Shopping List App</h1>
               <h2>Welcome, {user.name}!</h2>
             </div>} />
-          <Route path="/planner" element={<WeeklyPlanner />} />
+          <Route path="/planner" element={<WeeklyPlanner user={user} />} />
           <Route path="/meals" element={<Meals user={user} />} />
-          <Route path="/shopping" element={<ShoppingList />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/shopping" element={<ShoppingList user={user} />} />
+          <Route path="/settings" element={<Settings user={user} />} />
         </Routes>
       </div>
     </>
