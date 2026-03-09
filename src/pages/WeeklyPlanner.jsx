@@ -90,6 +90,55 @@ function WeeklyPlanner({ user }) {
 
   const weeklyTotals = getWeeklyTotals();
 
+  const handleCreateShoppingList = async () => {
+    try {
+      const savedPlanner = localStorage.getItem('weeklyPlanner');
+      if (!savedPlanner) return;
+
+      const planner = JSON.parse(savedPlanner);
+
+      // Collect meal names from planner
+      const mealNames = Object.values(planner)
+        .flatMap(day => Object.values(day))
+        .filter(name => name); // remove empty strings
+
+      if (mealNames.length === 0) {
+        alert('No meals selected for shopping list.');
+        return;
+      }
+
+      // Fetch meals for user
+      const res = await fetch(`http://localhost:3001/api/meals/${user.id}`);
+      const meals = await res.json();
+
+      // Pull ingredients from selected meals
+      const ingredients = meals
+        .filter(meal => mealNames.includes(meal.name))
+        .flatMap(meal => JSON.parse(meal.ingredients));
+
+      if (ingredients.length === 0) {
+        alert('Selected meals have no ingredients.');
+        return;
+      }
+
+      // Deduplicate ingredients
+      const uniqueIngredients = [...new Set(ingredients)];
+
+      // Save to localStorage
+      localStorage.setItem('shoppingList', JSON.stringify(uniqueIngredients));
+      alert('Shopping list created!');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const isMealAllowedForType = (meal, type) => {
+    if (type === 'Breakfast') return meal.breakfast === 1 || meal.breakfast === true;
+    if (type === 'Lunch') return meal.lunch === 1 || meal.lunch === true;
+    if (type === 'Dinner') return meal.dinner === 1 || meal.dinner === true;
+    return false;
+  };
+
   return (
     <div className="container planner-container">
       {/* Weekly totals */}
@@ -97,7 +146,9 @@ function WeeklyPlanner({ user }) {
         <h3>Weekly Totals:</h3>
         <p>Calories: {weeklyTotals.totalCalories} | Protein: {weeklyTotals.totalProtein}g</p>
         <button onClick={resetPlanner} style={{ marginRight: '1rem' }}>Reset Week</button>
-        <button>Create Shopping List</button>
+        <button onClick={handleCreateShoppingList}>
+          Create Shopping List
+        </button>
       </div>
 
       {daysOfWeek.map(day => {
@@ -114,17 +165,19 @@ function WeeklyPlanner({ user }) {
                     onChange={(e) => handleMealChange(day, type, e.target.value)}
                   >
                     <option value="">-- Select Meal --</option>
-                    {meals.map(meal => (
-                      <option
-                        key={meal.id}
-                        value={meal.name}
-                        style={{
-                          opacity: Object.values(planner[day]).includes(meal.name) ? 0.5 : 1
-                        }}
-                      >
-                        {meal.name}
-                      </option>
-                    ))}
+                    {meals
+                      .filter(meal => isMealAllowedForType(meal, type))
+                      .map(meal => (
+                        <option
+                          key={meal.id}
+                          value={meal.name}
+                          style={{
+                            opacity: Object.values(planner[day]).includes(meal.name) ? 0.5 : 1
+                          }}
+                        >
+                          {meal.name}
+                        </option>
+                      ))}
                   </select>
                 </div>
               ))}

@@ -464,8 +464,133 @@ button:hover {
 }
 
 /* Horizontal layout on larger screens */
-@media (min-width: 768px) {
+@media (min-width: 700px) {
   .meal-row {
     flex-direction: row;
   }
+}
+
+
+/* ---------- Shopping List ---------- */
+.shopping-list-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1.5rem 2rem;
+  background-color: #222;
+  border: 2px solid #333;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.shopping-list-container h2 {
+  margin-bottom: 1rem;
+  color: rgb(180,153,4);
+  text-align: center;
+}
+
+.shopping-input-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.shopping-input-row input {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background-color: #2a2a2a;
+  color: white;
+  font-size: 1rem;
+}
+
+.shopping-input-row input:focus {
+  outline: none;
+  border-color: rgb(180,153,4);
+}
+
+.shopping-input-row button {
+  padding: 0.5rem 1rem;
+  background-color: rgb(180,153,4);
+  color: #090808;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.shopping-input-row button:hover {
+  background-color: #b59e03;
+  border-color: #fff;
+}
+
+.shopping-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.shopping-list-item {
+  display: flex;
+  justify-content: space-between; /* pushes text left, button right */
+  align-items: center;            /* vertical align */
+  background-color: #333;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.4rem;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  min-height: 40px;               /* ensures uniform height */
+  box-sizing: border-box;
+}
+
+.shopping-list-item:hover {
+  background-color: #444;
+}
+
+.item-name {
+  font-weight: 500;
+  flex: 1;                        /* takes up remaining space */
+  overflow-wrap: break-word;       /* wraps long text */
+}
+
+.delete-item-btn {
+  background: #d9534f;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.2rem 0.6rem;
+  cursor: pointer;
+  font-weight: bold;
+  flex-shrink: 0;                  /* prevents button from shrinking */
+  margin-left: 0;                  /* remove previous spacing */
+}
+
+.delete-item-btn:hover {
+  background-color: #c9302c;
+}
+
+.clear-button {
+  margin-top: 1rem;
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-color: rgb(180,153,4);
+  color: #090808;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+.clear-button:hover {
+  background-color: #b59e03;
+  border-color: #fff;
+}
+
+.empty-state {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  padding: 1rem 0;
 }
